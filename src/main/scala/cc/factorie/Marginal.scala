@@ -56,7 +56,7 @@ trait DiscreteMarginal extends Marginal {
 
 // TODO Do we need a trait version of these? -akm
 //trait DiscreteMar1[V1<:DiscreteVectorVar] extends DiscreteMar { def _1: V1; def proportions: Proportions1 }
-trait DiscreteMarginal1[V1<:DiscreteTensorVar] extends Marginal1 with DiscreteMarginal {
+trait DiscreteMarginal1[+V1<:DiscreteTensorVar] extends Marginal1 with DiscreteMarginal {
   override def _1: V1
   override def variables = Seq(_1)
   def proportions: Proportions1
