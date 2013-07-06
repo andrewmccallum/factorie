@@ -118,7 +118,8 @@ object WithinDocCoref2Trainer {
     for (o <- opts.values.toSeq.sortBy(_.name); if !ignoreOpts(o.name)) println(o.name + " = " + o.value)
     println()
 
-    val wn =   new WordNet(new File(opts.wnDir.value))   //cc.factorie.app.nlp.wordnet.WordNet
+    //val wn =   new WordNet(new File(opts.wnDir.value))   //cc.factorie.app.nlp.wordnet.WordNet
+    val wn = WordNet
     val rng = new scala.util.Random(opts.randomSeed.value)
 
     val (trainDocs,trainPredMaps,testDocs,testTrueMaps) =  if(opts.useNonGoldBoundaries.value )

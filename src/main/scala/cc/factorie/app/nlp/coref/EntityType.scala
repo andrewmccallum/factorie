@@ -89,6 +89,7 @@ object EntityTypeAnnotator1Util {
   }
 
   def detectIfPerson(strs: Seq[String], uStrs: Seq[String]): Boolean = {
+    assert(strs.length > 0)
     val isCased = strs.zip(uStrs).exists(ab => ab._1 != ab._2)
     val str = strs.mkString(" ")
     val uStr = uStrs.mkString(" ")
