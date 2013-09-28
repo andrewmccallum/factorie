@@ -106,7 +106,7 @@ trait ChainLink[This<:ChainLink[This,C],C<:Chain[C,This]] extends AbstractChainL
   }
   // TODO currently the size of the window is actually 2*n; perhaps this should be changed! -akm
   def windowWithoutSelf(n:Int): Seq[This] = {
-    for (i <- math.max(_position-n,0) to math.min(_position+n, _chain.length-1); if (i != _position)) yield chain(i)
+    for (i <- math.max(_position-n,0) to math.min(_position+n, _chain.length-1); if i != _position) yield chain(i)
   }
   def between(other:This): Seq[This] = {
     require(other.chain == chain)
@@ -165,7 +165,7 @@ trait Chain[This<:Chain[This,E],E<:ChainLink[E,This]] extends ThisType[This] wit
   }
   def asSeq: IndexedSeq[E] = _chainseq
   def chainFrozen: Boolean = _frozen
-  def chainFreeze: Unit = _frozen = true
+  def chainFreeze(): Unit = _frozen = true
 }
 
 /** An abstract variable that is a Chain, with value IndexedSeq[ElementType].

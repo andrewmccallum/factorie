@@ -62,7 +62,7 @@ class TestRealVariable extends JUnitSuite with cc.factorie.util.FastLogging {
       def unroll2(prob: Prob) = Nil
     }
     val model = new TemplateModel with Parameters { addTemplates(new SimpleTemplate(this)) }
-    val objective = new HammingTemplate[Data]
+    val objective = HammingObjective
 
     val pieces = new ArrayBuffer[LikelihoodExample[Iterable[DiscreteVar],Model]]
     pieces += new LikelihoodExample(trainings.toIterable, model, InferByBPLoopy)
@@ -108,7 +108,7 @@ class TestSampleRank2 extends AssertionsForJUnit  with cc.factorie.util.FastLogg
   {
     def propose(context: Null)(implicit delta: DiffList): Double =
       {
-        for (b <- bools) b.set(random.nextBoolean)(delta)
+        for (b <- bools) b.set(random.nextBoolean())(delta)
         0.0
       }
   }
@@ -164,7 +164,7 @@ class TestSampleRank2 extends AssertionsForJUnit  with cc.factorie.util.FastLogg
         configuration(i).set(result(i))(null)
     }
 
-  def checkAllPairs =
+  def checkAllPairs() =
     {
       //
       //Test extremes

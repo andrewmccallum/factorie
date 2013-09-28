@@ -109,9 +109,9 @@ object TutorialFactors {
     // The default statistics are a Tuple containing the values of the neighbors.
     // However the known return type is Any, so it must be cast to use.
     // (This lack of typing is because we want the method to be flexibly override-able in subclasses.)
-    if (s2.asInstanceOf[Tuple2[Int,Double]]._2 == 4.4)
+    if (s2.asInstanceOf[(Int, Double)]._2 == 4.4)
       println("The second factor's second value is 4.4")
-    assertEquals(8.8, s2.asInstanceOf[Tuple2[Int,Double]]._2, 0.01)
+    assertEquals(8.8, s2.asInstanceOf[(Int, Double)]._2, 0.01)
 
     // Some subclasses of Factor override the method to return more specific types.
     // If the Tuple statistics are sufficient for your needs, 
@@ -269,7 +269,7 @@ object TutorialFactors {
     var maxScore = Double.NegativeInfinity
     var maxLabeling = LabelDomain.head
     for (labeling <- LabelDomain) {
-      l1 := labeling
+      l1.set(labeling)(null)
       val score = cf.currentScore
       if (score > maxScore) {
         maxScore = score

@@ -18,11 +18,13 @@ package cc.factorie.variable
 /** An abstract variable whose value is a pointer to a Scala object (which may also be a Variable).
     See also ArrowVar and EdgeVar.
     @author Andrew McCallum */
-trait RefVar[A<:AnyRef] extends Var
+trait RefVar[A<:AnyRef] extends Var {
+  type Value = A
+}
 
 /** An abstract mutable variable whose value is a pointer to a Scala object (which may also be a Variable).
     @author Andrew McCallum */
-trait MutableRefVar[A<:AnyRef] extends RefVar[A] with MutableVar[A]
+trait MutableRefVar[A<:AnyRef] extends RefVar[A] with MutableVar
 
 /** A variable whose value is a pointer to a Scala object (which may also be a Variable).
     See also ArrowVariable and EdgeVariable.
@@ -37,15 +39,15 @@ class RefVariable[A<:AnyRef](initialValue:A = null) extends MutableRefVar[A] {
   override def toString = printName + "(" + (if (value == this) "this" else value.toString) + ")"
   case class RefVariableDiff(oldValue:A, newValue:A) extends Diff {
     def variable: RefVariable[A] = RefVariable.this
-    def redo = _value = newValue
-    def undo = _value = oldValue
+    def redo() = _value = newValue
+    def undo() = _value = oldValue
   }
 }
 
 /** An abstract MutableRefVar variable that also has a target value.
     @author Andrew McCallum */
-trait LabeledRefVar[A>:Null<:AnyRef] extends LabeledVar {
-  this: MutableRefVar[A] =>
+trait LabeledRefVar[A>:Null<:AnyRef] extends MutableRefVar[A] with LabeledVar {
+  //this: MutableRefVar[A] =>
   def targetValue: A
   def isUnlabeled = targetValue == null
 }

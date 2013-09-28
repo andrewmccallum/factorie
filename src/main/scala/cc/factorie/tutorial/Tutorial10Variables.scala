@@ -47,11 +47,11 @@ object TutorialVariables {
     i.set(3)(d) // This method will create a Diff object and append it to the DiffList d.
     println("After i.set(2), variable i has value "+i.value)
     assertEquals(3, i.value)
-    d.undo
+    d.undo()
     println("After DiffList.undo, variable i has value "+i.value)
     assertEquals(2, i.value)
     // A Diff and a DiffList can be re-done also
-    d.redo
+    d.redo()
     println("After DiffList.redo, variable i has value "+i.value)
     assertEquals(3, i.value)
     
@@ -104,7 +104,7 @@ object TutorialVariables {
      **/
 
     // cc.factorie.Var* are traits that capture various abstractions.
-    val mv: MutableVar[String] = s // All MutableVar have a set() method and a := method.
+    val mv: MutableVar = s // All MutableVar have a set() method and a := method.
     //val cv: VarWithConstantValue = s // This would cause a compilation error.
     
     // cc.factorie.Variable* are classes, all of which are mutable

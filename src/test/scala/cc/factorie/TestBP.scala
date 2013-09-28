@@ -218,11 +218,11 @@ class TestBP extends util.FastLogging { //}extends FunSuite with BeforeAndAfter 
     }
 
     // Testing MPLP
-    val mplpSummary = InferByMPLP.infer(Seq(l0, l1, l2, l3), model)
-    val mapSummary = MaximizeByBPChain.infer(Seq(l0, l1, l2, l3), model)
+    val mplpSummary: MAPSummary = InferByMPLP.infer(Seq(l0, l1, l2, l3), model, null)
+    val mapSummary: cc.factorie.infer.MAPSummary = MaximizeByBPChain.infer(Seq(l0, l1, l2, l3), model, null)
     for (v <- Seq(l0, l1, l2, l3)) {
-      val mfm = mplpSummary.mapAssignment(v)
-      val bpm = mapSummary.mapAssignment(v)
+      val mfm: CategoricalValue[String] = mplpSummary.mapAssignment.apply[Label, Label#Value](v)
+      val bpm: CategoricalValue[String] = mapSummary.mapAssignment.apply[Label, Label#Value](v)
       assertEquals(bpm.intValue, mfm.intValue)
     }
 
@@ -336,7 +336,7 @@ class TestBP extends util.FastLogging { //}extends FunSuite with BeforeAndAfter 
     val numVars = 2
     val vars: Seq[BinVar] = (0 until numVars).map(new BinVar(_)).toSeq
     val varSet = vars.toSet[DiscreteVar]
-    for (seed <- (0 until 50)) {
+    for (seed <- 0 until 50) {
       val random = new Random(seed * 1024)
       val model = new ItemizedModel
       for (i <- 0 until numVars) {
@@ -389,7 +389,7 @@ class TestBP extends util.FastLogging { //}extends FunSuite with BeforeAndAfter 
       val mfg2 = BP.inferTreeMarginalMax(vars, model)
       assertEquals(mfg.logZ, mfg2.logZ, 0.001)
       for (v <- vars) {
-        assertEquals(mfg.mapAssignment(v).intValue, mfg2.mapAssignment(v).intValue)
+        assertEquals(mfg.mapAssignment.apply[BinVar,BinVar#Value](v).intValue, mfg2.mapAssignment.apply[BinVar,BinVar#Value](v).intValue)
       }
       mfg.setToMaximize(null)
       logger.debug("probabilities : " + scores.map(math.exp(_) / Z).mkString(", "))
@@ -521,15 +521,15 @@ object BPTestUtils {
 
   def newFactor2(n1: BinVar, n2: BinVar, scoreEqual: Double, scoreUnequal: Double): Factor = {
     val family = new DotTemplate2[BinVar, BinVar] with Parameters {
-      override def neighborDomain1 = BinDomain
-      override def neighborDomain2 = BinDomain
+      //override def neighborDomain1 = BinDomain
+      //override def neighborDomain2 = BinDomain
       val weights = Weights(new la.DenseTensor1(BinDomain.size))
       def unroll1(v: BinVar) = if (v == n1) Factor(n1, n2) else Nil
       def unroll2(v: BinVar) = if (v == n2) Factor(n1, n2) else Nil
       override def statistics(value1: BinVar#Value, value2: BinVar#Value) = 
         BinDomain(if (value1.intValue == value2.intValue) 0 else 1)
     }
-    assert(family.statisticsAreValues == false)
+    assert(!family.statisticsAreValues)
     family.weights.value(0) = scoreEqual
     family.weights.value(1) = scoreUnequal
     family.factors(n1).head
@@ -537,8 +537,8 @@ object BPTestUtils {
   
   def newTemplate2(n1: BinVar, n2: BinVar, scoreEqual: Double, scoreUnequal: Double) = {
     new TupleTemplateWithStatistics2[BinVar, BinVar] {
-      override def neighborDomain1 = BinDomain
-      override def neighborDomain2 = BinDomain
+      //override def neighborDomain1 = BinDomain
+      //override def neighborDomain2 = BinDomain
       def unroll1(v: BPTestUtils.this.type#BinVar) = if (v == n1) Factor(n1, n2) else Nil
       def unroll2(v: BPTestUtils.this.type#BinVar) = if (v == n2) Factor(n1, n2) else Nil
       def score(v1:BinVar#Value, v2:BinVar#Value): Double = if (v1 == v2) scoreEqual else scoreUnequal
